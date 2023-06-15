@@ -1,0 +1,19 @@
+.cart-icon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-image: url('/images/cart.png'); /* Replace with your cart icon image URL */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.cart-count {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 50%;
+    background-color: #ff0000; /* Replace with desired background color */
+    color: #ffffff; /* Replace with desired text color */
+    font-size: 12px;
+    font-weight: bold;
+}

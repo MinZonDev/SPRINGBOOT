@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="_layout"
+      xmlns:custom="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>List product</title>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="cartItem, itemIndex : ${cartItems}">
+                <td th:text="${itemIndex.index + 1}"></td>
+                <td th:text="${cartItem.name}"></td>
+                <td>
+                    <img th:src="@{/images/{image}(image=${cartItem.image})}" height="120" width="150" alt="Product Image">
+                </td>
+                <td th:text="${cartItem.price}"></td>
+                <td>
+                    <form th:action="@{/cart/update}" method="post">
+                        <input type="hidden" name="productId" th:value="${cartItem.id}" />
+                        <input type="number" name="quantity" min="1" th:value="${cartItem.quantity}" />
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+                <td th:text="${cartItem.price * cartItem.quantity}"></td>
+                <td>
+                    <form th:action="@{/cart/remove/{productId}(productId=${cartItem.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5"></td>
+                <td class="total-price" colspan="2">
+                    <h3>Total Price: <span th:text="${totalPrice}"></span></h3>
+                    <form th:action="@{/cart/order}" method="post">
+                        <button type="submit" class="btn btn-success">Order</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

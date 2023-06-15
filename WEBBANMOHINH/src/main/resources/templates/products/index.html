@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="_layout"
+      xmlns:custom="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>List product</title>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Price</th>
+            <th scope="col">Category</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${listproduct}" >
+            <th scope="row" th:text="${product.id}"></th>
+            <td th:text="${product.name}"></td>
+            <!--   <td th:text="${product.image}"></td> -->
+            <td>
+                <img height="120" width="150" th:src="@{/images/} + ${product.image}"/>
+            </td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.category.name}"></td>
+            <td>
+                <span sec:authorize="hasAuthority('SALES')">
+                   <a th:href="@{/products/edit/{id}(id=${product.id})}" custom:linkMethod="post"  class="btn btn-secondary">Edit</a>
+                </span>
+            </td>
+
+            <td>
+                <span sec:authorize="hasAuthority('USER')">
+                    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                             <button type="submit" class="btn btn-secondary">Buy</button>
+                    </form>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <nav aria-label="Page navigation example" th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:class="${listproduct.hasPrevious() ? '' : 'disabled'}">
+                <a class="page-link" th:href="@{/products?page=__${listproduct.number-1}__}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                th:class="${listproduct.number == page ? 'active' : ''}">
+                <a class="page-link "th:href="@{/products?page=__${page}__}" th:text="${page + 1}"></a></li>
+
+            <li class="page-item" th:class="${listproduct.hasNext() ? '' : 'disabled'}">
+                <a class="page-link " th:href="@{/products?page=__${listproduct.number+1}__}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
