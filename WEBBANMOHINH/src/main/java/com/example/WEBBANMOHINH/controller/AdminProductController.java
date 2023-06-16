@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -96,26 +97,69 @@ public class AdminProductController {
     }
     @PostMapping("/edit")
     public String edit(@Valid Product editProduct,
-                       @RequestParam MultipartFile imageProduct,
+                       @RequestParam("imageProduct") MultipartFile imageProduct,
                        BindingResult result,
-                       Model model)
-    {
+                       Model model) {
         if (result.hasErrors()) {
             model.addAttribute("product", editProduct);
-            model.addAttribute("listCategory", categoryService.GetAll() );
+            model.addAttribute("listCategory", categoryService.GetAll());
             return "admin/products/edit";
         }
-        if(imageProduct != null && imageProduct.getSize() > 0)
-        {
-            try {
-                File saveFile = new ClassPathResource("static/images").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + editProduct.getImage());
-                Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            productService.edit(editProduct, imageProduct);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        productService.edit(editProduct);
         return "redirect:/admin/products";
     }
+
+//    @PostMapping("/edit")
+//    public String edit(@Valid Product editProduct,
+//                       @RequestParam MultipartFile imageProduct,
+//                       BindingResult result,
+//                       Model model) {
+//        if (result.hasErrors()) {
+//            model.addAttribute("product", editProduct);
+//            model.addAttribute("listCategory", categoryService.GetAll());
+//            return "admin/products/edit";
+//        }
+//        if (imageProduct != null && imageProduct.getSize() > 0) {
+//            try {
+//                // Đường dẫn tuyệt đối đến thư mục lưu trữ hình ảnh
+//                String imagePath = "D:\\DO_AN_JAVA\\SPRINGBOOT\\WEBBANMOHINH\\src\\main\\resources\\static\\images";
+//                Path path = Paths.get(imagePath + File.separator + editProduct.getImage());
+//                Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        productService.edit(editProduct);
+//        return "redirect:/admin/products";
+//    }
+
+
+//    @PostMapping("/edit")
+//    public String edit(@Valid Product editProduct,
+//                       @RequestParam MultipartFile imageProduct,
+//                       BindingResult result,
+//                       Model model)
+//    {
+//        if (result.hasErrors()) {
+//            model.addAttribute("product", editProduct);
+//            model.addAttribute("listCategory", categoryService.GetAll() );
+//            return "admin/products/edit";
+//        }
+//        if(imageProduct != null && imageProduct.getSize() > 0)
+//        {
+//            try {
+//                File saveFile = new ClassPathResource("static/images").getFile();
+//                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + editProduct.getImage());
+//                Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        productService.edit(editProduct);
+//        return "redirect:/admin/products";
+//    }
 }
